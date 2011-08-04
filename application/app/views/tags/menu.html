@@ -1,0 +1,13 @@
+<ul class="menu">
+	<li><a href="@{site.Torrents.page}">Торренты</a></li>
+	<li><a href="@{site.Torrent.upload}">Загрузить</a></li>
+	<li><a href="@{site.Profile.profile}">Профиль</a></li>
+	<li><a href="@{site.Profile.signup}">Регистрация</a></li>
+
+	#{if _account != null}
+		<li><a href="@{site.Profile.logout}">Выйти</a></li>
+	#{/if}
+	#{else}
+		<li><a href="@{site.Profile.login}">Войти</a></li>
+	#{/else}
+</ul>

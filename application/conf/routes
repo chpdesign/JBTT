@@ -1,0 +1,57 @@
+# Routes
+# This file defines all application routes (Higher priority routes first)
+# ~~~~
+
+# Map static resources from the /app/public folder to the /public path
+GET		/public/															staticDir:public
+
+# Tracker routes
+GET		/announce/?															tracker.Announce.index
+GET		/scrape/?															tracker.Scrape.index
+
+# Site
+GET		/																	site.Torrents.page
+GET		/page/{<[0-9]{1,20}>pageId}/?										site.Torrents.page
+GET		/category/{<[0-9]{1,20}>categoryId}/?								site.Torrents.page
+GET		/category/{<[0-9]{1,20}>categoryId}/page/{<[0-9]{1,20}>pageId}/?	site.Torrents.page
+GET		/tag/{<[0-9a-zA-Z]{1,255}>tagKey}/?									site.Torrents.page
+GET		/tag/{<[0-9a-zA-Z]{1,255}>tagKey}/page/{<[0-9]{1,20}>pageId}/?		site.Torrents.page
+
+GET		/torrent/upload/?													site.Torrent.upload
+POST	/torrent/upload/torrent/?											site.Torrent.uploadTorrentFile
+POST	/torrent/upload/process/?											site.Torrent.uploadApply
+POST	/torrent/upload/test/?												site.Torrent.uploadTorrent
+
+GET		/torrent/{<[0-9]{1,20}>torrentId}/? 								site.Torrent.view
+GET		/torrent/{<[0-9]{1,20}>torrentId}/download/?						site.Torrent.download
+GET		/torrent/{<[0-9]{1,20}>torrentId}/delete/?							site.Torrent.delete
+GET		/torrent/{<[0-9]{1,20}>torrentId}/edit/?							site.Index.notImplemented
+POST	/torrent/contents/?													site.Torrent.getTorrentContents
+POST	/torrent/upload-contents/?											site.Torrent.getTemporaryTorrentContents
+
+GET		/signup/?															site.Profile.signup
+POST	/signup/process?													site.Profile.signupProcess
+
+GET		/login/?															site.Profile.login
+POST	/login/process?														site.Profile.loginProcess
+
+GET		/logout/?															site.Profile.logout
+
+GET		/user/{<[0-9]{1,20}>accountId}/?									site.Profile.view
+GET		/profile/?															site.Profile.profile
+GET		/profile/edit/?														site.Profile.edit
+POST	/profile/save/?														site.Profile.save
+GET		/profile/change-passkey/?											site.Profile.changePasskey
+
+POST	/signup/check-login													site.Profile.checkLogin
+POST	/signup/check-email													site.Profile.checkEmail
+POST	/signup/check-displayName											site.Profile.checkDisplayName
+
+GET		/search/?															site.Index.notImplemented
+
+# Debug
+GET		/test																site.Tests.index
+
+# Catch all
+#*		/{module}/{controller}/{action}/?									{module}.{controller}.{action}
+#*		/{controller}/{action}/?											site.{controller}.{action}

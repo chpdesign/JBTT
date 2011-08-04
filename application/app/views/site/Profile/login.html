@@ -1,0 +1,21 @@
+#{extends 'main.html' /}
+#{set title:' - Вход' /}
+
+<div>${loginMessage}</div>
+
+<form action="@{site.Profile.loginProcess()}" method="post">
+	<table>
+		<tr class="login">
+			<td>Логин:</td>
+			<td><input name="loginData.login" type="text" /></td>
+			<td></td>
+		</tr>
+		<tr class="password">
+			<td>Пароль:</td>
+			<td><input name="loginData.password" type="password" /></td>
+			<td></td>
+		</tr>
+	</table>
+
+	<input type="submit" value="Войти" />
+</form>

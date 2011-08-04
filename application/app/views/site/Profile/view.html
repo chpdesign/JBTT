@@ -1,0 +1,56 @@
+#{extends 'main.html' /}
+#{set title:' - Профиль' /}
+
+<table class="profileData">
+	<tr><td colspan="2" class="displayName"><h1>${account.getDisplayName()}</h1></td></tr>
+	<tr><td colspan="2" class="avatar"><img src="${account.getGravatarUrl(100)}" alt="Аватар" /></td></tr>
+	<tr><td colspan="2" class="editProfile">#{if isMe}<a href="@{site.Profile.edit()}">Редактировать профиль</a>#{/if}</td></tr>
+	<tr><td>Рейтинг:</td><td>${account.getStats().getUploadRatio()}</td></tr>
+	<tr><td>Отдано:</td><td>${account.getStats().getUploadedStr()}</td></tr>
+	<tr><td>Скачано:</td><td>${account.getStats().getDownloadedStr()}</td></tr>
+	<tr><td>Торрентов скачано:</td><td>${account.getStats().getTorrentsCount()}</td></tr>
+	<tr><td>Зарегистрирован:</td><td>${tracker.util.DateUtils.getDate(account.getRegistrationDate())}</td></tr>
+	<tr><td>Активность:</td><td>${tracker.util.DateUtils.getDate(account.getLastActivityDate())}</td></tr>
+</table>
+
+<h2>Активные торренты</h2>
+<ul class="activeTorrents">
+	#{list activeTorrents, as:'torrent'}
+		<li class="${torrent_parity}">
+			<h1><a href="@{site.Torrent.view(torrent.getTorrentId())}">${torrent.getTitle()}</a></h1>
+			<table>
+				<tr>
+					<td class="percent">
+						#{if torrent.getCompletedPercent() >= 100}
+							<em>${torrent.getCompletedPercent()}%</em>
+						#{/if}
+						#{else}
+							${torrent.getCompletedPercent()}%
+						#{/else}
+					</td>
+					<td class="ratio">
+						Рейтинг:
+							<strong>
+								#{if torrent.getTotalUploaded() < torrent.getTotalDownloaded()}
+									<span class="download">${torrent.getUploadRatio()}</span>
+								#{/if}
+								#{else}
+									<span class="upload">${torrent.getUploadRatio()}</span>
+								#{/else}
+							</strong>
+						(<span class="upload">${torrent.getTotalUploadedStr()}</span> / <span class="download">${torrent.getTotalDownloadedStr()}</span>)
+					</td>
+					<td class="seeds">
+						Раздают: <span>${torrent.getSeeds()}</span>
+					</td>
+					<td class="peers">
+						Качают: <span>${torrent.getPeers()}</span>
+					</td>
+					<td class="completed">
+						Скачали: <span>${torrent.getCompleted()}</span>
+					</td>
+				</tr>
+			</table>
+		</li>
+	#{/list}
+</ul>

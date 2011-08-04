@@ -1,0 +1,54 @@
+#{extends 'main.html' /}
+#{set title:' - Главная' /}
+
+#{verbatim} ${pageNavigation.getHtml()} #{/verbatim}
+<div class="clear"></div>
+
+<ul class="torrents">
+#{list torrentsPage.getItems(), as:'torrent'}
+	<li class="torrent">
+		<h2><a href="/torrent/${torrent.getId()}">${torrent.getTitle()}</a></h2>
+		<div class="author">Добавил <strong><a href="/user/${torrent.getAuthor()?.getId()}">${torrent.getAuthor()?.getDisplayName()}</a></strong> ${torrent.getCreationDateString()}</div>
+
+		<img class="poster" width="250px" alt="Постер" src="http://animesalvation.com/wp-content/uploads/2010/08/505070.png">
+
+		<div class="description">
+			#{verbatim}
+				${torrent.getDescriptionHtml()}
+			#{/verbatim}
+		</div>
+		<div class="clear"></div>
+
+		<div class="footer">
+			<ul>
+				<li>
+					<strong><a href="/torrent/${torrent.getId()}/download">Скачать торрент</a></strong>
+				</li>
+				<li>
+					<strong>Размер:</strong> ${torrent.getTorrentSizeFormatted()}
+				</li>
+				<li>
+					<strong>Метки:</strong>
+					#{list torrent.getTags(), as:'tag'}
+						<a href="/tag/${tag.getKey()}" class="tag">${tag.getTitle().toLowerCase()}</a>
+					#{/list}
+					<div class="clear"></div>
+				</li>
+				<li>
+					<strong>Статистика: </strong>
+					<span class="completed">${torrent.getStatistics().getCompleted()}</span> /
+					<span class="seeds">${torrent.getStatistics().getSeeds()}</span> /
+					<span class="peers">${torrent.getStatistics().getPeers()}</span>
+				</li>
+				<li class="right">
+					<a href="/torrent/${torrent.getId()}#comments">Комментарии (${torrent.getCommentsCount()})</a>
+				</li>
+			</ul>
+			<div class="clear"></div>
+		</div>
+	</li>
+#{/list}
+</ul>
+
+#{verbatim} ${pageNavigation.getHtml()} #{/verbatim}
+<div class="clear"></div>

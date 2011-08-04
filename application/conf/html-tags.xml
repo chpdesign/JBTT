@@ -1,0 +1,14 @@
+<!-- UNDONE -->
+<tags>
+	<tag name="span">
+		<attributes type="allowed">
+			<attribute name="style">
+				<patterns>
+					<item name="text-align">
+						<pattern>(left|right|center)</pattern>
+					</item>
+				</patterns>
+			</attribute>
+		</attributes>
+	</tag>
+</tags>

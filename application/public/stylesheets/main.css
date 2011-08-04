@@ -1,0 +1,184 @@
+@charset "utf-8";
+
+.clear { clear: both; }
+.hidden { display: none; }
+
+body {
+	margin: 0;
+	padding: 0;
+}
+
+.wrapper {
+	font-family: 'Trebuchet MS', sans-serif;
+	font-size: 12px;
+
+	margin: 0 auto;
+	max-width: 900px;
+}
+
+.wrapper h1 {
+	font-size: 18px;
+	margin: 10px 0;
+}
+
+.wrapper h2 {
+	font-size: 15px;
+	margin: 5px 0;
+}
+
+.wrapper h3 {
+	font-size: 13px;
+	margin: 3px 0;
+}
+
+.wrapper ul {
+	list-style-type: none;
+	padding: 0;
+	margin: 0;
+}
+
+.wrapper a {
+	color: #06c;
+}
+
+.wrapper table {
+	border-width: 0;
+	border-spacing: 0;
+	border-collapse: separate;
+}
+
+.wrapper table th, td {
+	padding: 0 3px;
+	border: 0;
+}
+
+.wrapper .ajax-link {
+	color: #06c;
+	text-decoration: none;
+	border-bottom: 1px dotted #06c;
+	cursor: pointer;
+}
+
+.wrapper .header {
+	margin: 10px 0;
+}
+
+.wrapper .content { }
+
+.wrapper .footer { }
+
+
+.wrapper .header .logo {
+	float: left;
+	font-size: 18px;
+	margin-right: 30px;
+}
+
+.wrapper .header ul.menu {
+	float: left;
+	font-size: 18px;
+}
+
+	.wrapper .header ul.menu li {
+		float: left;
+		margin: 0 10px;
+	}
+
+.wrapper ul.torrents {
+	margin: 0;
+	padding: 0;
+	list-style-type: none;
+}
+
+.wrapper .torrent {
+	margin-bottom: 20px;
+}
+
+	.wrapper .torrent .poster {
+		float: left;
+		margin-right: 10px;
+	}
+
+	.wrapper .torrent .author {
+		margin-bottom: 5px;
+	}
+
+	.wrapper .torrent .description { }
+
+	.wrapper .torrent .footer {
+		margin-top: 5px;
+	}
+
+		.wrapper .torrent .footer ul li {
+			float: left;
+			margin-right: 10px;
+		}
+
+		.wrapper .torrent .footer ul li.right {
+			float: right;
+			margin-right: 0;
+		}
+
+		.wrapper .torrent .footer .completed {
+			font-weight: bold;
+			color: #00f;
+		}
+
+		.wrapper .torrent .footer .seeds {
+			font-weight: bold;
+			color: #0f0;
+		}
+
+		.wrapper .torrent .footer .peers {
+			font-weight: bold;
+			color: #f00;
+		}
+
+.wrapper ul.pagination {
+
+}
+	.wrapper ul.pagination li {
+		float: left;
+		padding: 2px 4px;
+		font-size: 14px;
+	}
+
+		.wrapper ul.pagination li a {
+			height: 100%;
+			width: 100%;
+			background: #fff;
+			color: #000;
+			text-decoration: none;
+		}
+
+	.wrapper ul.pagination li.current {
+		background: #444;
+		color: #fff;
+	}
+
+.torrentFileForm { /*margin-bottom: 20px;*/ }
+	.torrentFileForm .error { color: #f00; }
+	.torrentFileForm .contents table.container th { text-align: left; }
+	.torrentFileForm .contents table.container tr { }
+	.torrentFileForm .contents table.container td.path { }
+	.torrentFileForm .contents table.container td.size { }
+
+table.profileData { }
+	table.profileData tr td:first-child { text-align: right; font-weight: bold; }
+	table.profileData tr td.displayName { text-align: center; }
+	table.profileData tr td.avatar { text-align: center; }
+	table.profileData tr td.editProfile { text-align: center; font-weight: normal; padding-bottom: 10px; }
+
+ul.activeTorrents { }
+	ul.activeTorrents li { padding: 3px; }
+		ul.activeTorrents li.odd { background: #eee; }
+	ul.activeTorrents h1 { font-size: 14px; margin: 0; }
+	ul.activeTorrents table { font-size: 11px; color: #444; }
+	ul.activeTorrents .percent { min-width: 27px; font-weight: bold; color: #c00; text-align: right; }
+		ul.activeTorrents .percent em { font-style: normal; color: #093; }
+	ul.activeTorrents .ratio { }
+		ul.activeTorrents .ratio .download { color: #c00; }
+		ul.activeTorrents .ratio .upload { color :#093; }
+    ul.activeTorrents .seeds span { font-weight: bold; color: #093; }
+	ul.activeTorrents .peers span { font-weight: bold; color: #c00; }
+	ul.activeTorrents .completed span { font-weight: bold; color: #03c; }

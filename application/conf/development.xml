@@ -1,0 +1,168 @@
+<config>
+	<common>
+		<timezone>Europe/Moscow</timezone>
+	</common>
+
+	<site>
+		<title>Java BitTorrent Tracker</title>
+		<encoding>UTF-8</encoding> <!-- Рекомендуется UTF-8 -->
+		<baseUrl>http://188.130.240.5:9000</baseUrl>
+	</site>
+
+	<accounts>
+		<login>
+			<characters>0-9a-zA-Z</characters>
+			<length>
+				<min>3</min>
+				<max>32</max>
+			</length>
+		</login>
+
+		<password>
+			<hash>
+				<algorithm>MD5</algorithm>
+				<salt>2eZ6%A!3B+04</salt> <!-- Рекомендуется изменить! -->
+			</hash>
+
+			<length>
+				<min>5</min>
+				<max>32</max>
+			</length>
+		</password>
+
+		<displayName>
+			<length>
+				<min>3</min>
+				<max>32</max>
+			</length>
+		</displayName>
+	</accounts>
+
+	<tracker>
+		<templates>
+			<title>.{1,128}?</title>
+		</templates>
+
+		<torrentFileName>[localhost]_%id%.torrent</torrentFileName> <!-- Разрешенные теги: %id% -->
+
+		<charset>UTF-8</charset>
+
+		<bytesCharset>ISO-8859-1</bytesCharset> <!-- По умолчанию: ISO-8859-1. Использование Юникода не допускается. TODO: Может вообще убрать это из конфига за ненадобностью? -->
+
+		<announce>
+			<interval>
+				<common type="Long">30</common>
+				<min type="Long">5</min>
+			</interval>
+			
+			<numwant>
+				<default type="Long">100</default>
+				<maximum type="Long">200</maximum>
+			</numwant>
+			
+			<announcers type="List">
+				<item>http://192.168.0.10:9000/announce</item>
+				<item>http://188.130.240.5:9000/announce</item>
+			</announcers>
+			
+			<!-- TODO: Добавить возможность выбора подходящего ретрекера по IP пользователя. -->
+			<retrackers type="List">
+				<item>http://retracker.local/announce</item>
+			</retrackers>
+		</announce>
+
+		<scrape>
+			<requireValidPasskey type="Boolean">false</requireValidPasskey> <!-- Проверять passkey. Если true, то идет дополнительный запрос к БД. -->
+			<maximumInfoHashes type="Long">50</maximumInfoHashes> <!-- Максимальное количество запрашиваемых торрентов. -->
+		</scrape>
+
+		<peers>
+			<!--
+				Принцип работы:
+					Новые записи о пирах собираются в памяти и по достижении заданного в maxEntries количества
+				сохраняются в базу одним запросом вида "INSERT INTO ... ON DUPLICATE KEY UPDATE ...".
+					Если за обозначенное время в пуле новых пиров не накопилось достаточного количества пиров,
+				то производится сохранение в базу того, что есть. Исключение - когда в пуле нет ни одного пира.
+			-->
+			<maxEntries type="Long">50</maxEntries> <!-- Максимальное количество хранимых в памяти пиров. -->
+			<maxDelay type="Long">5</maxDelay> <!-- Предельный интервал сохранения в БД в секундах. -->
+
+			<!--
+				Если от пира не поступало запросов в течении заданного в секундах времени, то удалить его.
+				Внимание! Данное значение должно быть больше, чем интервал анонсов tracker.announce.interval.common.
+			-->
+			<expireTime type="Long">3600</expireTime>
+
+			<!-- Интервал запросов в БД на очистку от устаревших данных в секундах. -->
+			<cleanInterval type="Long">300</cleanInterval>
+		</peers>
+	</tracker>
+
+	<threads>
+		<poolSize type="Long">100</poolSize> <!-- Размер пула запланированных потоков. -->
+	</threads>
+
+	<uploads> <!-- Слэши в начале и конце пути указывать не следует. -->
+		<paths>
+			<torrent>application/public/uploads/torrents</torrent>
+			<screenshot>application/public/uploads/images</screenshot>
+		</paths>
+		<urls>
+			<screenshot>public/uploads/images</screenshot>
+		</urls>
+	</uploads>
+
+	<database>
+		<connection>
+			<driver>com.mysql.jdbc.Driver</driver>
+			<url>jdbc:mysql://localhost/tracker?useUnicode=true&amp;characterEncoding=utf8</url>
+			<username>tracker</username>
+			<password>123098</password>
+		</connection>
+
+		<pool>
+			<maxConnections type="Long">300</maxConnections>
+			<maxIdleTime type="Long">360</maxIdleTime> <!-- Если задан 0, то никогда не закрывать неиспользуемые подключения. -->
+		</pool>
+	</database>
+
+	<cache>
+		<accounts>
+			<enabled type="Boolean">true</enabled>
+		</accounts>
+
+		<accountstats>
+			<enabled type="Boolean">true</enabled>
+		</accountstats>
+
+		<activetorrents>
+			<enabled type="Boolean">true</enabled>
+		</activetorrents>
+
+		<torrents>
+			<enabled type="Boolean">true</enabled>
+		</torrents>
+
+		<torrentstats>
+			<enabled type="Boolean">true</enabled>
+		</torrentstats>
+
+		<pages>
+			<enabled type="Boolean">true</enabled>
+		</pages>
+	</cache>
+
+	<pagination> <!-- {page} - page number, {0}, {1} and etc - parameters -->
+		<torrents>
+			<perPage type="Long">10</perPage>
+			<firstPageUrl>/</firstPageUrl>
+			<baseUrl>/page/{page}</baseUrl>
+		</torrents>
+
+		<comments>
+			<perPage type="Long">5</perPage>
+			<firstPageUrl>/torrent/{0}</firstPageUrl>
+			<baseUrl>/torrent/{0}?page={page}</baseUrl>
+		</comments>
+	</pagination>
+</config>

@@ -1,0 +1,188 @@
+form#{extends 'main.html' /}
+#{set title:' - Загрузить торрент' /}
+
+#{set 'moreScripts'}
+	<script type="text/javascript" src="@{'/public/javascripts/editor/editor.js'}" charset="UTF-8"></script>
+	<script type="text/javascript" src="@{'/public/javascripts/valums-ajax-upload/ajaxupload.js'}" charset="UTF-8"></script>
+#{/set}
+
+#{set 'moreStyles'}
+	<link rel="stylesheet" href="@{'/public/javascripts/editor/css/editor.css'}" type="text/css" />
+#{/set}
+
+<div class="torrentFileForm">
+	<h3>Торрент</h3>
+	<input class="input" name="torrentUpload.torrent" type="file" />
+
+	<div class="info hidden">
+		Загружен: <span class="fileName" style="font-weight: bold;"></span> <a href="#" class="edit">Изменить</a><br/>
+		[<span class="infoHash"></span>]<br/>
+	</div>
+
+	<div class="error hidden"></div>
+	<div class="contents hidden">
+		<table class="container">
+			<thead>
+				<tr><th>Путь</th><th>Размер</th></tr>
+			</thead>
+			<tbody></tbody>
+		</table>
+	</div>
+</div>
+
+<form class="torrentDescriptionForm" action="" method="post" enctype="multipart/form-data">
+	<input name="torrentUpload.uploadId" type="hidden" value="" />
+
+	<h3>Название</h3>
+	<input name="title" type="text" style="width: 500px;" /><br/>
+
+	<h3>Описание</h3>
+	<textarea name="description" style="width: 600px; height: 200px;">[u]Информация об аниме[/u]
+[b]Страна: [/b]
+[b]Жанр: [/b]
+[b]Тип: [/b]ТВ
+[b]Год выхода: [/b]
+[b]Кол серий: [/b]
+[b]Режиссер: [/b]
+[b]Продолжительность: [/b]
+[b]Описание: [/b]
+
+[u]Дополнительно[/u]
+[b]Формат: [/b]
+[b]Разрешение: [/b]
+[b]Субтитры: [/b]
+[b]Язык: [/b]</textarea>
+	<br/>
+
+	<!--
+	Прикрепить изображения:
+	<ul class="images">
+	</ul>
+	<a href="javascript:void(0)" onclick="addImageField();">Attach</a>
+
+	<script type="text/javascript">
+		function addImageField() {
+			var inputListItem = $('<li><input name="image_1" type="file" />&nbsp;<a href="javascript:void(0)" onclick="">X</a></li>');
+			$('ul.images:first').append(inputListItem);
+		}
+
+		function removeImageField() {
+		}
+	</script>
+	-->
+
+	<br/>
+	<input type="submit" value="Загрузить" />
+</form>
+
+<script type="text/javascript">
+	var uploadId = null;
+
+	$(document).ready(function() {
+		$('.torrentDescriptionForm input[type="submit"]').attr('disabled', 'true');
+
+		$('.info .edit').click(function() {
+			$('.torrentFileForm .info').addClass('hidden');
+			$('.torrentFileForm .contents').addClass('hidden');
+			$('.torrentFileForm .input').removeClass('hidden');
+			return false;
+		});
+
+		new AjaxUpload($('.torrentFileForm:first .input:first'), {
+			action: '@{site.Torrent.uploadTorrentFile()}',
+			name: 'torrentFileUpload',
+			data: {
+				'currentTime': (new Date()).getTime()
+			},
+			autoSubmit: true,
+			responseType: 'json',
+			onChange: function(file, extension) {
+				$('.torrentFileForm .error').addClass('hidden');
+				$('.torrentFileForm .contents').addClass('hidden');
+			},
+			onSubmit: function(file, extension) {
+				if (!extension || !/^(torrent)$/i.test(extension)) {
+					alert('Вы должны загрузить файл с расширением .torrent');
+					return false;
+				}
+			},
+			onComplete: function(file, response) {
+				if (response.error) {
+					$('.torrentFileForm .error').html(response.error);
+					$('.torrentFileForm .error').removeClass('hidden');
+				} else {
+					$('.torrentFileForm .info .fileName').html(file);
+					$('.torrentFileForm .info .infoHash').html(response.infoHash);
+					$('.torrentFileForm .input').addClass('hidden');
+					$('.torrentFileForm .info').removeClass('hidden');
+
+					$('.torrentDescriptionForm input[name="torrentUpload.uploadId"]').attr('value', response.uploadId);
+					$('.torrentDescriptionForm input[type="submit"]').removeAttr('disabled');
+
+					uploadId = response.uploadId;
+
+					$.post('@{site.Torrent.getTemporaryTorrentContents()}',
+						{
+							'uploadId': uploadId
+						},
+						function(response) {
+							if (response.error) {
+								alert(response.error);
+
+								$('.torrentFileForm .info').addClass('hidden');
+								$('.torrentFileForm .input').removeClass('hidden');
+
+								return;
+							}
+
+							var containerBody = $('.torrentFileForm .contents .container tbody');
+							containerBody.html('');
+							$.each(response.files, function(index, value) {
+								var fileEntry = $('<tr><td class="path">' + value.path + '</td><td class="size">' + value.size + '</td></tr>');
+								containerBody.append(fileEntry);
+							});
+
+							$('.torrentFileForm .contents').removeClass('hidden');
+						},
+						'json'
+					);
+				}
+			}
+		});
+
+		$('textarea[name="description"]:first').editor({});
+
+		$('.torrentDescriptionForm input[type="submit"]').click(function() {
+			$('.torrentDescriptionForm input[type="submit"]').attr('disabled', 'true');
+
+			var title = $('.torrentDescriptionForm input[name="title"]').val();
+			var description = $('.torrentDescriptionForm textarea[name="description"]').val();
+
+			$.post('@{site.Torrent.uploadApply()}',
+				{
+					'applyRequest.uploadId': uploadId,
+					'applyRequest.title': title,
+					'applyRequest.description': description
+				},
+				function (response) {
+					if (response.error) {
+						alert(response.error);
+
+						$('.torrentFileForm .info').addClass('hidden');
+						$('.torrentFileForm .input').removeClass('hidden');
+
+						return;
+					}
+
+					alert('Торрент "' + response.torrentTitle + '" успешно загружен.');
+
+					window.location = '/torrent/' + response.torrentId + '';
+					// TODO: redirect to /torrent/<id>/edit
+				},
+				'json'
+			);
+
+			return false;
+		});
+	});
+</script>

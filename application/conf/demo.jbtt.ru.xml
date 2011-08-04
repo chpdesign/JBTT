@@ -1,0 +1,23 @@
+<config overrides="development">
+	<site>
+		<baseUrl>http://demo.jbtt.ru</baseUrl>
+	</site>
+
+	<accounts>
+		<password>
+			<hash>
+				<salt>J23D4FjhKLH5G+1C</salt>
+			</hash>
+		</password>
+	</accounts>
+
+	<tracker>
+		<torrentFileName>[demo.jbtt.ru]_%id%.torrent</torrentFileName> <!-- Allowed tags: %id% -->
+
+		<announce>
+			<announcers type="List">
+				<item>http://demo.jbtt.ru/announce</item>
+			</announcers>
+		</announce>
+	</tracker>
+</config>

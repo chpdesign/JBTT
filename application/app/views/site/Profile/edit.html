@@ -1,0 +1,120 @@
+#{extends 'main.html' /}
+#{set title:' - Редактирование профиля' /}
+
+<script type="text/javascript">
+	function saveProfile() {
+		var form = $('form.profile').first();
+		var request = $.post('@{site.Profile.save}', form.serialize());
+
+		request.success(function(data) {
+			if (data.errors.length > 0) {
+				$.each(data.errors, function(index, value) {
+					alert(value);
+				});
+			} else {
+				// successfully saved
+			}
+		});
+
+		request.error(function(jqXHR, textStatus, errorThrown) {
+			alert('При попытке сохранить данные профиля произошла ошибка.');
+			console.log(textStatus);
+			console.log(errorThrown)
+		});
+	}
+
+	function changePasskey() {
+		if (!confirm('Вы уверены, что хотите изменить Passkey?\nПосле изменения ключа вам необходимо будет заново скачать все раздачи!')) {
+			return;
+		}
+
+		var request = $.get('@{site.Profile.changePasskey}');
+
+		request.success(function(data) {
+			$('.passkey .value').first().text(data.value);
+			alert('Ваш Passkey успешно изменен. Теперь вам необходимо заново скачать все ваши раздачи для учета статистики по ним.');
+		});
+
+		request.error(function(jqXHR, textStatus, errorThrown) {
+			alert('При попытке изменить Passkey произошла ошибка.');
+			console.log(textStatus);
+			console.log(errorThrown)
+		});
+	}
+</script>
+
+
+<h1>Редактирование профиля ${account.getDisplayName()}</h1>
+
+<form action="" class="profile">
+	<table class="fields">
+		<tr class="gender">
+			<td>Пол</td>
+			<td>
+				<ul>
+					%{
+						String[] selectedGender = new String[3];
+						switch (profileData.gender) {
+							case 1:
+								selectedGender[1] = "checked='checked' ";
+								break;
+							case 2:
+								selectedGender[2] = "checked='checked' ";
+								break;
+							default:
+								selectedGender[0] = "checked='checked' ";
+								break;
+						}
+					}%
+
+					<li class="male"><input name="profileData.gender" value="1" type="radio" ${selectedGender[1]} /> Мужской</li>
+					<li class="female"><input name="profileData.gender" value="2" type="radio" ${selectedGender[2]} /> Женский</li>
+					<li class="undecided"><input name="profileData.gender" value="0" type="radio" ${selectedGender[0]} /> Не указан</li>
+				</ul>
+			</td>
+		</tr>
+
+		<tr class="icq">
+			<td>ICQ</td>
+			<td><input type="text" name="profileData.icq" value="${profileData.icq}" /></td>
+		</tr>
+
+		<tr class="skype">
+			<td>Skype</td>
+			<td><input type="text" name="profileData.skype" value="${profileData.skype}" /></td>
+		</tr>
+
+		<tr class="jabber">
+			<td>Jabber</td>
+			<td><input type="text" name="profileData.jabber" value='${profileData.jabber}' /></td>
+		</tr>
+
+		<tr>
+			<td>
+				Отображаемое имя
+				<span>Ваш логин останется прежним.</span>
+			</td>
+			<td><input type="text" name="displayName" value="${account.getDisplayName()}"></td>
+		</tr>
+
+		<tr>
+			<td>
+				E-mail
+				<!-- <span>После изменения адреса необходимо будет пройти по активационной ссылке в письме.</span> -->
+			</td>
+			<td><input type="text" name="email" value="${account.getEmail()}"></td>
+		</tr>
+	</table>
+</form>
+
+<table class="fields">
+	<tr class="passkey">
+		<td>
+			Passkey
+			<span><strong>Внимание!</strong> После изменения ключа вам необходимо будет заново скачать все раздачи.</span>
+		</td>
+		<td><span class="value">${account.getPasskey()}</span> <span class="ajax-link" onclick="changePasskey();">изменить</span></td>
+	</tr>
+</table>
+
+<input type="button" value="Сохранить изменения" onclick="saveProfile();" />

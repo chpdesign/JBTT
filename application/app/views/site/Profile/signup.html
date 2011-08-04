@@ -1,0 +1,118 @@
+#{extends 'main.html' /}
+#{set title:' - Регистрация' /}
+#{set 'moreScripts'}
+    <script src="@{'/public/javascripts/common/status.js'}" type="text/javascript" charset="utf-8"></script>
+#{/set}
+
+<form action="@{site.Profile.signupProcess()}" method="post">
+	<table>
+		<tr class="displayName">
+			<td>Имя:</td>
+			<td><input name="signupInfo.displayName" type="text" /></td>
+			<td></td>
+		</tr>
+		<tr class="login">
+			<td>Логин:</td>
+			<td><input name="signupInfo.login" type="text" /></td>
+			<td></td>
+		</tr>
+		<tr class="password">
+			<td>Пароль:</td>
+			<td><input name="signupInfo.password" type="password" /></td>
+			<td></td>
+		</tr>
+		<tr class="passwordConfirmation">
+			<td>Подтверждение пароля:</td>
+			<td><input type="password" /></td>
+			<td></td>
+		</tr>
+		<tr class="email">
+			<td>E-mail:</td>
+			<td><input name="signupInfo.email" type="text" /></td>
+			<td><div></div></td>
+		</tr>
+	</table>
+
+	<input type="submit" value="Зарегистрироваться" onclick="return submitCheck();" />
+</form>
+
+<script type="text/javascript">
+	function setValidators() {
+		var displayNameNode = $('.displayName');
+		var loginNode = $('.login');
+		var passwordNode = $('.password');
+		var passwordConfirmationNode = $('.passwordConfirmation');
+		var emailNode = $('.email');
+
+
+		$('input:first', displayNameNode).keyup(function() {
+			if ($('input:first', displayNameNode).val().length > 0) {
+				// TODO: implement delay.
+				var post = $.post('@{site.Profile.checkDisplayName}', { value: $('input:first', displayNameNode).val() });
+				post.success(function(data) {
+					displayNameNode.setStatus({ status: data.status, message: data.message });
+				});
+			} else {
+				displayNameNode.hideStatus();
+			}
+
+//			if ($('input:first').attr('value').length > 0) {
+//				$('td:eq(2)', displayNameNode).text('✗ Желаемое имя уже занято.');
+//				$('td:eq(2)', displayNameNode).attr('style', 'opacity: 0; font: arial,verdana,tahoma,sans-serif; color: #fff; font-size: 0.8em; font-weight: bold; background: #ad2930; padding: 0 5px; border-radius: 4px 4px 4px 4px;');
+//				$('td:eq(2)', displayNameNode).animate({ opacity: 1, left: '+=50', height: 'toggle' }, { complete: function() {
+//					$('td:eq(2)', displayNameNode).attr('style', 'opacity: 1; font: arial,verdana,tahoma,sans-serif; color: #fff; font-size: 0.8em; font-weight: bold; background: #ad2930; padding: 0 5px; border-radius: 4px 4px 4px 4px;');
+//				}});
+//				// $('td:eq(2)', displayNameNode).attr('style', 'opacity: 1;');
+//			} else {
+//				$('td:eq(2)', displayNameNode).attr('style', 'opacity: 1; font: arial,verdana,tahoma,sans-serif; color: #fff; font-size: 0.8em; font-weight: bold; background: #ad2930; padding: 0 5px; border-radius: 4px 4px 4px 4px;');
+//
+//				$('td:eq(2)', displayNameNode).animate({ opacity: 1, left: '-=50', height: 'toggle' }, { complete: function() {
+//					$('td:eq(2)', displayNameNode).text('');
+//					$('td:eq(2)', displayNameNode).attr('style', '');
+//				}});
+//			}
+
+//			if (displayName.length < 3) {
+//				errors['displayName'] = 'Имя не может быть короче 3 символов.';
+//			} else if (displayName.length > 32) {
+//				errors['displayName'] = 'Имя не может быть длиннее 32 символов.';
+//			}
+		});
+
+		$('input:first', loginNode).keyup(function() {
+			if ($('input:first', loginNode).val().length > 0) {
+				// TODO: implement delay.
+				var post = $.post('@{site.Profile.checkLogin}', { value: $('input:first', loginNode).val() });
+				post.success(function(data) {
+					loginNode.setStatus({ status: data.status, message: data.message });
+				});
+			} else {
+				loginNode.hideStatus();
+			}
+		});
+
+		$('input:first', emailNode).keyup(function() {
+			if ($('input:first', emailNode).val().length > 0) {
+				// TODO: implement delay.
+				var post = $.post('@{site.Profile.checkEmail}', { value: $('input:first', emailNode).val() });
+				post.success(function(data) {
+					emailNode.setStatus({ status: data.status, message: data.message });
+				});
+			} else {
+				emailNode.hideStatus();
+			}
+		});
+	}
+
+	function setError() {
+
+	}
+
+	function submitCheck() {
+
+	}
+
+	setValidators();
+</script>
+
+<a href="#" onclick="setValidators(); return false;">test</a>
