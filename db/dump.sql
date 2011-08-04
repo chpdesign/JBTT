@@ -258,6 +258,7 @@ CREATE TABLE `torrent_comments` (
   `torrent_id` bigint(20) unsigned NOT NULL,
   `account_id` bigint(20) unsigned NOT NULL,
   `content` mediumtext,
+  `content_html` mediumtext,
   `visible` tinyint(1) unsigned NOT NULL DEFAULT '1',
   `post_date` datetime DEFAULT NULL,
   PRIMARY KEY (`id`)
