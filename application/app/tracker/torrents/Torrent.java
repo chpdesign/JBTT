@@ -399,12 +399,40 @@ public class Torrent implements Serializable, ICache {
 		return torrentFile;
 	}
 
+	// TODO: Перенести все, касающееся комментариев, в соответствующий класс.
+
 	public CommentsPage getComments(Integer pageNumber) throws Throwable {
 		return CommentsPaginator.get(this.getId(), pageNumber);
 	}
 
 	public int getCommentsCount() throws Throwable {
 		return CommentsPaginator.getPageSet(this.getId()).getItemsCount();
+	}
+
+	public int getCommentsPages() throws Throwable {
+		CommentsPageSet pageSet = CommentsPaginator.getPageSet(this.getId());
+
+		int count = this.getCommentsCount() / pageSet.getItemsPerPage();
+		if (this.getCommentsLastPageCount() > 0) {
+			count++;
+		}
+
+		return count;
+	}
+
+	public int getCommentsLastPageCount() throws Throwable {
+		return this.getCommentsCount() % CommentsPaginator.getPageSet(this.getId()).getItemsPerPage();
+	}
+
+	public int getCommentsNextPage() throws Throwable {
+		int page = this.getCommentsPages();
+
+		// Если добавление комментария вызовет создание новой страницы, то увеличиваем на единицу.
+		if (this.getCommentsLastPageCount() >= CommentsPaginator.getPageSet(this.getId()).getItemsPerPage()) {
+			page++;
+		}
+
+		return page;
 	}
 
 	public Images getImages() {
@@ -506,7 +534,7 @@ public class Torrent implements Serializable, ICache {
 			torrent.setAuthorId(resultSet.getLong("author_id"));
 			torrent.setTitle(resultSet.getString("title"));
 			torrent.setDescription(resultSet.getString("description"), false);
-			torrent.setDescriptionHtml(resultSet.getString("description_html")); // TODO: don't regenerate
+			torrent.setDescriptionHtml(resultSet.getString("description_html"));
 			torrent.setCreationDate(resultSet.getTimestamp("creation_date"));
 			torrent.setEditDate(resultSet.getTimestamp("edit_date"));
 			torrent.setInfoHash(resultSet.getBytes("info_hash"));

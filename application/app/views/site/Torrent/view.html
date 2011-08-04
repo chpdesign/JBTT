@@ -2,18 +2,14 @@
 #{set 'title'} - ${torrent.getTitle()}#{/set}
 
 #{set 'moreScripts'}
-	<script type="text/javascript" src="/public/javascripts/editor/editor.js"></script>
+	<script type="text/javascript" src="@{'/public/javascripts/markitup/jquery.markitup.js'}"></script>
+	<script type="text/javascript" src="@{'/public/javascripts/markitup/sets/xbbcode/set.js'}"></script>
 #{/set}
 
 #{set 'moreStyles'}
-	<link rel="stylesheet" href="/public/javascripts/editor/css/editor.css" type="text/css" />
+	<link rel="stylesheet" href="@{'/public/javascripts/markitup/skins/simple/style.css'}" type="text/css" />
+	<link rel="stylesheet" href="@{'/public/javascripts/markitup/sets/xbbcode/style.css'}" type="text/css" />
 #{/set}
-
-<script type="text/javascript">
-	$(document).ready(function() {
-		$('textarea[name="comment.content"]:first').editor({});
-	});
-</script>
 
 <div class="torrent">
 	<h2><a href="/torrent/${torrent.getId()}">${torrent.getTitle()}</a></h2>
@@ -49,7 +45,7 @@
 </div>
 
 
-<div id="comments"></div>
+<div id="comments">
 	<h3>Комментарии</h3>
 
 	#{verbatim} ${commentsPageNavigation.getHtml()} #{/verbatim}
@@ -59,7 +55,7 @@
 	#{list commentsPage.getItems(), as:'comment'}
 		<li>
 			<div class="author"><strong><a href="/user/${comment.getAccount()?.getId()}">${comment.getAccount()?.getDisplayName()}</a></strong> ${comment.getPostDateString()}</div>
-			<div class="content" style="margin-bottom: 15px;">${comment.getContent()}</div>
+			<div class="content" style="margin-bottom: 15px;">#{verbatim}${comment.getContentHtml()}#{/verbatim}</div>
 		</li>
 	#{/list}
 	</ul>
@@ -67,7 +63,23 @@
 	#{verbatim} ${commentsPageNavigation.getHtml()} #{/verbatim}
 	<div class="clear"></div>
 
+
+	#{if currentAccount != null}
 	<div class="new_comment">
-		<textarea name="comment.content" style="width: 100%; height: 150px;"></textarea>
+		<script type="text/javascript">
+			$(document).ready(function() {
+				$('textarea[name="commentData.content"]:first').markItUp(mySettings);
+			});
+		</script>
+		<form action="@{site.Torrent.postComment()}" method="post">
+			<input name="commentData.torrentId" type="hidden" value="${torrent.getId()}" />
+			<textarea name="commentData.content" style="width: 100%; height: 150px;"></textarea>
+
+			<input type="submit" value="Send" />
+		</form>
 	</div>
+	#{/if}
+	#{else}
+		Вам необходимо <a href="@{site.Profile.login()}">авторизоваться</a> для того, чтобы оставлять комментарии.
+	#{/else}
 </div>

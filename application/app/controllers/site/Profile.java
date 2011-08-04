@@ -16,7 +16,6 @@ import java.util.ArrayList;
 import java.util.List;
 
 public class Profile extends SecuredController {
-	// @Before(unless = { "login", "loginProcess", "logout", "signup", "signupProcess", "view" })
 	@Before(only = { "profile", "save", "edit", "changePasskey" })
 	protected static void checkAuthentification() throws Throwable {
 		SecuredController.checkAuthentification();

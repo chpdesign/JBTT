@@ -150,6 +150,10 @@
 		<pages>
 			<enabled type="Boolean">true</enabled>
 		</pages>
+
+		<comments>
+			<enabled type="Boolean">true</enabled>
+		</comments>
 	</cache>
 
 	<pagination> <!-- {page} - page number, {0}, {1} and etc - parameters -->

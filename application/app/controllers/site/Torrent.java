@@ -12,6 +12,7 @@ import tracker.bencode.Encoder;
 import tracker.cache.TorrentsCache;
 import tracker.pagination.CommentsPage;
 import tracker.pagination.PageNavigation;
+import tracker.torrents.Comment;
 import tracker.torrents.TorrentContentsResponse;
 import tracker.torrents.TorrentMetaInfo;
 import tracker.torrents.upload.TorrentApplyRequest;
@@ -244,6 +245,23 @@ public class Torrent extends SecuredController {
 		torrent.delete();
 	}
 
+	public static void postComment(CommentData commentData) throws Throwable {
+		tracker.torrents.Torrent torrent = TorrentsCache.getInstance().getById(commentData.torrentId);
+		notFoundIfNull(torrent, "Такого торрента не существует.");
+
+		Comment comment = new Comment();
+		comment.setTorrentId(torrent.getId());
+		comment.setAccountId(currentAccount.getId());
+		comment.setContent(commentData.content); // TODO: filter me!
+		comment.setVisible(true);
+		comment.setPostDate(new Timestamp(System.currentTimeMillis()));
+		comment.save();
+
+		Logger.info("Comment saved with ID=" + comment.getId());
+
+		view(torrent.getId(), torrent.getCommentsNextPage());
+	}
+
 	public static void getTorrentContents(Long torrentId) throws Throwable {
 		TorrentContentsResponse contentsResponse = new TorrentContentsResponse();
 
@@ -293,5 +311,10 @@ public class Torrent extends SecuredController {
 
 		contentsResponse.setFiles(fileEntries);
 		contentsResponse.send();
+	}
+
+	public class CommentData {
+		public Long torrentId;
+		public String content;
 	}
 }

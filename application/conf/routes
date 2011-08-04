@@ -26,6 +26,7 @@ GET		/torrent/{<[0-9]{1,20}>torrentId}/? 								site.Torrent.view
 GET		/torrent/{<[0-9]{1,20}>torrentId}/download/?						site.Torrent.download
 GET		/torrent/{<[0-9]{1,20}>torrentId}/delete/?							site.Torrent.delete
 GET		/torrent/{<[0-9]{1,20}>torrentId}/edit/?							site.Index.notImplemented
+POST	/torrent/post-comment												site.Torrent.postComment
 POST	/torrent/contents/?													site.Torrent.getTorrentContents
 POST	/torrent/upload-contents/?											site.Torrent.getTemporaryTorrentContents
 
