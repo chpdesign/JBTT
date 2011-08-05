@@ -104,7 +104,7 @@
 
 	<uploads> <!-- Слэши в начале и конце пути указывать не следует. -->
 		<paths>
-			<torrent>application/public/uploads/torrents</torrent>
+			<torrent>application/torrents</torrent>
 			<screenshot>application/public/uploads/images</screenshot>
 		</paths>
 		<urls>
