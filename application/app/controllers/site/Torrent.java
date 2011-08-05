@@ -1,6 +1,7 @@
 package controllers.site;
 
 import controllers.SecuredController;
+import org.apache.commons.io.FileUtils;
 import play.Logger;
 import play.data.FileUpload;
 import play.mvc.Before;
@@ -121,7 +122,7 @@ public class Torrent extends SecuredController {
 				return;
 			}
 
-			String fileName = Config.get("uploads.paths.torrent") + "/temp/" + torrentUpload.getId();
+			String fileName = Config.getString("uploads.paths.torrent") + "/temp/" + torrentUpload.getId();
 			temporaryTorrentFile = new File(fileName);
 
 			torrentUpload.delete();
@@ -137,6 +138,13 @@ public class Torrent extends SecuredController {
 				applyResponse.send();
 				return;
 			}
+
+			File torrentFile  = new File(Config.getString("uploads.paths.torrent"), torrentMetaInfo.getInfoHashHexString());
+			if (torrentFile.exists()) {
+				torrentFile.delete();
+			}
+
+			FileUtils.moveFile(temporaryTorrentFile, torrentFile);
 
 			torrent = new tracker.torrents.Torrent();
 			torrent.setAuthorId(currentAccount.getId());
@@ -154,7 +162,7 @@ public class Torrent extends SecuredController {
 			applyResponse.setTorrentTitle(torrent.getTitle());
 		} catch (Exception exception) {
 			Logger.error(exception, "");
-			applyResponse.setError("Произошла неизвестная ошибка при загрузке торрента.");
+			applyResponse.setError("Произошла ошибка при загрузке торрента.");
 			applyResponse.send();
 			return;
 		} finally {
