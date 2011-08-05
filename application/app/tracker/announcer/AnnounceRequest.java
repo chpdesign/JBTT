@@ -3,6 +3,7 @@ package tracker.announcer;
 import play.mvc.Http;
 import play.mvc.Scope;
 import tracker.Config;
+import tracker.util.NetUtils;
 import tracker.util.Utils;
 
 import java.io.UnsupportedEncodingException;
@@ -119,7 +120,7 @@ public class AnnounceRequest {
 
 	public String getIp() {
 		if (!params._contains("ip")) {
-			return Http.Request.current().remoteAddress;
+			return NetUtils.getIp();
 		}
 
 		return params.get("ip");
