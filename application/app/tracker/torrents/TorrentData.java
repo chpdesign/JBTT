@@ -8,9 +8,9 @@ import java.sql.Timestamp;
 public class TorrentData {
 	protected Long accountId;
 	protected Long torrentId;
-	protected Long uploaded;
-	protected Long downloaded;
-	protected Long left;
+	protected Long uploaded = 0L;
+	protected Long downloaded = 0L;
+	protected Long left = 0L;
 	protected Long uploadedSession;
 	protected Long downloadedSession;
 	protected Long leftSession;
