@@ -73,7 +73,7 @@ public class CommentsCache extends AbstractCache<Comment> {
 		return values;
 	}
 
-	private static CommentsCache instance;
+	private static volatile CommentsCache instance;
 
 	public static CommentsCache getInstance() throws CacheException {
 		if (instance == null) {

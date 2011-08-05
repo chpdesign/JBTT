@@ -24,7 +24,7 @@ public class ThreadPoolManager {
 		throw new CloneNotSupportedException();
 	}
 
-	protected static ThreadPoolManager instance;
+	protected static volatile ThreadPoolManager instance;
 
 	public static ThreadPoolManager getInstance() {
 		if (instance == null) {

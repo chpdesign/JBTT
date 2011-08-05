@@ -26,7 +26,7 @@ public class AccountStatsCache extends AbstractCache<AccountStats> {
 		return value;
 	}
 
-	private static AccountStatsCache instance;
+	private static volatile AccountStatsCache instance;
 
 	public static AccountStatsCache getInstance() throws CacheException {
 		if (instance == null) {

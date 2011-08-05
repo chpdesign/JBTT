@@ -27,7 +27,7 @@ public class ActiveTorrentsCache extends AbstractCache<ActiveTorrents> {
 		return value;
 	}
 
-	private static ActiveTorrentsCache instance;
+	private static volatile ActiveTorrentsCache instance;
 
 	public static ActiveTorrentsCache getInstance() throws CacheException {
 		if (instance == null) {

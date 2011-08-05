@@ -73,7 +73,7 @@ public class TorrentStatsCache extends AbstractCache<TorrentStats> {
 		return values;
 	}
 
-	private static TorrentStatsCache instance;
+	private static volatile TorrentStatsCache instance;
 
 	public static TorrentStatsCache getInstance() throws CacheException {
 		if (instance == null) {
