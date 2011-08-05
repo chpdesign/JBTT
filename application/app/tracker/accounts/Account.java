@@ -50,7 +50,7 @@ public class Account implements Serializable, ICache {
 			connection = DatabaseFactory.getInstance().getConnection();
 			statement = connection.prepareStatement(query, Statement.RETURN_GENERATED_KEYS);
 
-			statement.setLong(1, this.getId());
+			statement.setLong(1, (this.getId() != null) ? this.getId() : 0);
 			statement.setString(2, this.getLogin());
 			statement.setString(3, this.getPasswordHash());
 			statement.setString(4, this.getEmail());

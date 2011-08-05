@@ -146,6 +146,13 @@ public class Profile extends SecuredController {
 
 	public static void signupProcess(SignupData signupData) throws Throwable {
 		Account account = Account.create(signupData.login, signupData.password, signupData.email, signupData.displayName);
+
+		LoginData loginData = new LoginData();
+		loginData.login = signupData.login;
+		loginData.password = signupData.password;
+		loginData.authenticate(session);
+
+		Torrents.page(null, null, null);
 		renderText("signupProcess");
 	}
 
