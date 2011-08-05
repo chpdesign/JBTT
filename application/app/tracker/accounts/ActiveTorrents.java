@@ -59,39 +59,41 @@ public class ActiveTorrents implements Serializable, ICache {
 				activeTorrents.getTorrents().add(torrent);
 			}
 
-			String torrentIds = "";
-			for (TorrentData torrent : activeTorrents.getTorrents()) {
-				torrentIds += "," + torrent.getTorrentId();
-			}
-			torrentIds = torrentIds.substring(1);
-
-			String accountTorrentsQuery = "SELECT `torrent_id`, `uploaded`, `downloaded`, `left` FROM `account_torrents` WHERE `torrent_id` IN(" + torrentIds + ")";
-			accountTorrentsStatement = connection.prepareStatement(accountTorrentsQuery);
-			ResultSet accountTorrentsResultSet = accountTorrentsStatement.executeQuery();
-			while (accountTorrentsResultSet.next()) {
-				Long torrentId = accountTorrentsResultSet.getLong("torrent_id");
+			if (activeTorrents.getTorrents().size() > 0) {
+				String torrentIds = "";
 				for (TorrentData torrent : activeTorrents.getTorrents()) {
-					if (torrent.getTorrentId().equals(torrentId)) {
-						torrent.setUploaded(accountTorrentsResultSet.getLong("uploaded"));
-						torrent.setDownloaded(accountTorrentsResultSet.getLong("downloaded"));
-						torrent.setLeft(accountTorrentsResultSet.getLong("left"));
-						break;
+					torrentIds += "," + torrent.getTorrentId();
+				}
+				torrentIds = torrentIds.substring(1);
+
+				String accountTorrentsQuery = "SELECT `torrent_id`, `uploaded`, `downloaded`, `left` FROM `account_torrents` WHERE `torrent_id` IN(" + torrentIds + ")";
+				accountTorrentsStatement = connection.prepareStatement(accountTorrentsQuery);
+				ResultSet accountTorrentsResultSet = accountTorrentsStatement.executeQuery();
+				while (accountTorrentsResultSet.next()) {
+					Long torrentId = accountTorrentsResultSet.getLong("torrent_id");
+					for (TorrentData torrent : activeTorrents.getTorrents()) {
+						if (torrent.getTorrentId().equals(torrentId)) {
+							torrent.setUploaded(accountTorrentsResultSet.getLong("uploaded"));
+							torrent.setDownloaded(accountTorrentsResultSet.getLong("downloaded"));
+							torrent.setLeft(accountTorrentsResultSet.getLong("left"));
+							break;
+						}
 					}
 				}
-			}
 
-			String torrentsQuery = "SELECT `id`, `title`, `creation_date`, `info_hash`, `torrent_size` FROM `torrents` WHERE `id` IN(" + torrentIds + ")";
-			torrentsStatement = connection.prepareStatement(torrentsQuery);
-			ResultSet torrentsResultSet = torrentsStatement.executeQuery();
-			while (torrentsResultSet.next()) {
-				Long torrentId = torrentsResultSet.getLong("id");
-				for (TorrentData torrent : activeTorrents.getTorrents()) {
-					if (torrent.getTorrentId().equals(torrentId)) {
-						torrent.setTitle(torrentsResultSet.getString("title"));
-						torrent.setCreationDate(torrentsResultSet.getTimestamp("creation_date"));
-						torrent.setInfoHash(torrentsResultSet.getBytes("info_hash"));
-						torrent.setSize(torrentsResultSet.getLong("torrent_size"));
-						break;
+				String torrentsQuery = "SELECT `id`, `title`, `creation_date`, `info_hash`, `torrent_size` FROM `torrents` WHERE `id` IN(" + torrentIds + ")";
+				torrentsStatement = connection.prepareStatement(torrentsQuery);
+				ResultSet torrentsResultSet = torrentsStatement.executeQuery();
+				while (torrentsResultSet.next()) {
+					Long torrentId = torrentsResultSet.getLong("id");
+					for (TorrentData torrent : activeTorrents.getTorrents()) {
+						if (torrent.getTorrentId().equals(torrentId)) {
+							torrent.setTitle(torrentsResultSet.getString("title"));
+							torrent.setCreationDate(torrentsResultSet.getTimestamp("creation_date"));
+							torrent.setInfoHash(torrentsResultSet.getBytes("info_hash"));
+							torrent.setSize(torrentsResultSet.getLong("torrent_size"));
+							break;
+						}
 					}
 				}
 			}
