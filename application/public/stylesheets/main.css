@@ -94,11 +94,6 @@ body {
 	margin-bottom: 20px;
 }
 
-	.wrapper .torrent .poster {
-		float: left;
-		margin-right: 10px;
-	}
-
 	.wrapper .torrent .author {
 		margin-bottom: 5px;
 	}

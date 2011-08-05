@@ -10,14 +10,11 @@
 		<h2><a href="/torrent/${torrent.getId()}">${torrent.getTitle()}</a></h2>
 		<div class="author">Добавил <strong><a href="/user/${torrent.getAuthor()?.getId()}">${torrent.getAuthor()?.getDisplayName()}</a></strong> ${torrent.getCreationDateString()}</div>
 
-		<img class="poster" width="250px" alt="Постер" src="http://animesalvation.com/wp-content/uploads/2010/08/505070.png">
-
 		<div class="description">
 			#{verbatim}
 				${torrent.getDescriptionHtml()}
 			#{/verbatim}
 		</div>
-		<div class="clear"></div>
 
 		<div class="footer">
 			<ul>

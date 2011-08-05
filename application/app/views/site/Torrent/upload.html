@@ -2,12 +2,14 @@ form#{extends 'main.html' /}
 #{set title:' - Загрузить торрент' /}
 
 #{set 'moreScripts'}
-	<script type="text/javascript" src="@{'/public/javascripts/editor/editor.js'}" charset="UTF-8"></script>
+	<script type="text/javascript" src="@{'/public/javascripts/markitup/jquery.markitup.js'}"></script>
+	<script type="text/javascript" src="@{'/public/javascripts/markitup/sets/xbbcode/set.js'}"></script>
 	<script type="text/javascript" src="@{'/public/javascripts/valums-ajax-upload/ajaxupload.js'}" charset="UTF-8"></script>
 #{/set}
 
 #{set 'moreStyles'}
-	<link rel="stylesheet" href="@{'/public/javascripts/editor/css/editor.css'}" type="text/css" />
+	<link rel="stylesheet" href="@{'/public/javascripts/markitup/skins/simple/style.css'}" type="text/css" />
+	<link rel="stylesheet" href="@{'/public/javascripts/markitup/sets/xbbcode/style.css'}" type="text/css" />
 #{/set}
 
 <div class="torrentFileForm">
@@ -53,29 +55,14 @@ form#{extends 'main.html' /}
 [b]Субтитры: [/b]
 [b]Язык: [/b]</textarea>
 	<br/>
-
-	<!--
-	Прикрепить изображения:
-	<ul class="images">
-	</ul>
-	<a href="javascript:void(0)" onclick="addImageField();">Attach</a>
-
-	<script type="text/javascript">
-		function addImageField() {
-			var inputListItem = $('<li><input name="image_1" type="file" />&nbsp;<a href="javascript:void(0)" onclick="">X</a></li>');
-			$('ul.images:first').append(inputListItem);
-		}
-
-		function removeImageField() {
-		}
-	</script>
-	-->
-
-	<br/>
 	<input type="submit" value="Загрузить" />
 </form>
 
 <script type="text/javascript">
+	$(document).ready(function() {
+		$('textarea[name="description"]:first').markItUp(mySettings);
+	});
+
 	var uploadId = null;
 
 	$(document).ready(function() {
@@ -149,8 +136,6 @@ form#{extends 'main.html' /}
 				}
 			}
 		});
-
-		$('textarea[name="description"]:first').editor({});
 
 		$('.torrentDescriptionForm input[type="submit"]').click(function() {
 			$('.torrentDescriptionForm input[type="submit"]').attr('disabled', 'true');
