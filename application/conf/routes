@@ -50,9 +50,3 @@ POST	/signup/check-displayName											site.Profile.checkDisplayName
 
 GET		/search/?															site.Index.notImplemented
 
-# Debug
-GET		/test																site.Index.index
-
-# Catch all
-#*		/{module}/{controller}/{action}/?									{module}.{controller}.{action}
-#*		/{controller}/{action}/?											site.{controller}.{action}
