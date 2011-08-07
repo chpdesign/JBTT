@@ -23,8 +23,15 @@ public class TorrentMetaInfo {
 	protected List<FileMetaInfo> files = null;
 
 	public TorrentMetaInfo(File torrentMetaFile) throws Exception {
-		BufferedInputStream bufferedInputStream = new BufferedInputStream(new FileInputStream(torrentMetaFile));
-		this.torrentMap = Decoder.get().decode(bufferedInputStream);
+		BufferedInputStream bufferedInputStream = null;
+		try {
+			bufferedInputStream = new BufferedInputStream(new FileInputStream(torrentMetaFile));
+			this.torrentMap = Decoder.get().decode(bufferedInputStream);
+		} finally {
+			if (bufferedInputStream != null) {
+				bufferedInputStream.close();
+			}
+		}
 		this.parseData();
 	}
 
