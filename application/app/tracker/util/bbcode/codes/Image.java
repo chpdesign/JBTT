@@ -25,8 +25,4 @@ public class Image extends AbstractCode {
 			return "<img src=\"%attribute%\" />".replace("%attribute%", attribute);
 		}
 	}
-
-	public String getCloseTagHtml() {
-		return "";
-	}
 }

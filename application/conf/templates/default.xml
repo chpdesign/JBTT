@@ -1,0 +1,15 @@
+<template>
+	<title>Базовый шаблон</title>
+
+	<field>
+		<title>Заголовок</title>
+		<type>text</type>
+		<style>width: 500px;</style>
+	</field>
+
+	<field>
+		<title>Описание</title>
+		<type>textarea</type>
+		<style>width: 500px; height: 500px;</style>
+	</field>
+</template>

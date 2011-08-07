@@ -1,0 +1,88 @@
+<template>
+	<title>Игры</title>
+
+	<field>
+		<title>Название на русском</title>
+		<type>text</type>
+		<style>width: 300px;</style>
+		<pattern>.+</pattern>
+		<required>true</required>
+	</field>
+
+	<field>
+		<title>Оригинальное название</title>
+		<comment>Заполняется только в случае, если русское название отличается от оригинального.</comment>
+
+		<input type="text">
+			<style>width: 300px;</style>
+			<pattern>.+</pattern>
+		</input>
+	</field>
+
+	<field>
+		<title>Постер</title>
+		<comment>(здесь следует перечислить ссылки на рекомендуемые сервисы загрузки изображений)</comment>
+		<type>text</type>
+		<style>width: 300px;</style>
+		<pattern>.+</pattern>
+	</field>
+
+	<field>
+		<title>Разработчик</title>
+		<type>text</type>
+		<style>width: 300px;</style>
+		<pattern>.+</pattern>
+	</field>
+
+	<field>
+		<title>Издательство</title>
+		<type>text</type>
+		<style>width: 300px;</style>
+		<pattern>.+</pattern>
+	</field>
+
+	<field>
+		<title>Платформа</title>
+		<type>text</type>
+		<style>width: 300px;</style>
+		<pattern>.+</pattern>
+	</field>
+
+	<field>
+		<title>Версия</title>
+		<type>text</type>
+		<style>width: 300px;</style>
+		<pattern>.+</pattern>
+	</field>
+
+	<field>
+		<title>Тип издания</title>
+		<type>editable-select</type>
+		<style>width: 300px;</style>
+		<items>
+			<item title="Лицензия" value="1" />
+			<item title="Репак" value="2" />
+			<item title="Демо-версия" value="3" />
+			<item title="Другой" value="0">
+				<title>Платформа</title>
+				<style>width: 300px;</style>
+				<pattern>.+</pattern>
+			</item>
+		</items>
+	</field>
+
+	<field>
+		<title>Язык</title>
+		<type>editable-select</type>
+		<style>width: 300px;</style>
+		<items>
+			<item title="Русский" value="1" />
+			<item title="Английский" value="2" />
+			<item title="Другой или несколько" value="0">
+				<title>Укажите язык(и)</title>
+				<style>width: 300px;</style>
+				<pattern>.+</pattern>
+			</item>
+		</items>
+	</field>
+</template>

@@ -251,6 +251,12 @@ public class Torrent extends SecuredController {
 		tracker.torrents.Torrent torrent = tracker.torrents.Torrent.byId(torrentId);
 		notFoundIfNull(torrent, "Такого торрента не существует.");
 		torrent.delete();
+
+		if (flash.contains("lastUrl")) {
+			redirect(flash.get("lastUrl"));
+		} else {
+			Torrents.page(null, null, null);
+		}
 	}
 
 	public static void postComment(CommentData commentData) throws Throwable {

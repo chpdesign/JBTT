@@ -1,14 +1,12 @@
 package tracker.util.bbcode;
 
-import java.util.ArrayList;
-import java.util.List;
-import java.util.ListIterator;
+import play.Logger;
+
+import java.util.*;
 import java.util.regex.Matcher;
 import java.util.regex.Pattern;
 
 public class BBString {
-	protected boolean fixMarkup = true;
-
 	protected String source = null;
 	protected String html = null;
 
@@ -112,10 +110,15 @@ public class BBString {
 			}
 		}
 
-		if (this.fixMarkup) {
-			tags = this.fixMarkup(tags);
-		}
+		// Делаем XHTML-валидный код.
+		tags = this.fixMarkup(tags);
 
+		List<Tag> tagsTree = this.buildTree(tags);
+
+		// Применяем правила тегов.
+		this.fixTags(tagsTree);
+
+		// TODO: build HTML by tags tree
 		this.buildHtml(tags);
 	}
 
@@ -175,6 +178,112 @@ public class BBString {
 		}
 
 		return resultTags;
+	}
+
+	protected List<Tag> buildTree(List<Tag> sourceTags) {
+		return this.buildTree(sourceTags, 0);
+	}
+
+	protected List<Tag> buildTree(List<Tag> sourceTags, int level) {
+		List<Tag> resultTags = new ArrayList<Tag>();
+
+		for (int tagIndex = 0; tagIndex < sourceTags.size(); tagIndex++) {
+			Tag tag = sourceTags.get(tagIndex);
+
+			if (tag.isRemoved()) {
+				continue;
+			}
+
+			if (tag.getType() == Tag.Type.OPEN) {
+				if (tag.getPair() != null) {
+					tagIndex = sourceTags.indexOf(tag.getPair()) - 1;
+				}
+				continue;
+			}
+
+			List<Tag> subList = sourceTags.subList(
+					sourceTags.indexOf(tag.getPair()) + 1,
+					sourceTags.indexOf(tag)
+			);
+
+			tag.setChildren(this.buildTree(subList, level + 1));
+
+			resultTags.add(tag);
+		}
+
+		if (level == 0) {
+			this.printTree(resultTags, 0);
+		}
+
+		return resultTags;
+	}
+
+	protected void printTree(List<Tag> tags, int level) {
+		for (Tag tag : tags) {
+			if (tag.isRemoved()) {
+				continue;
+			}
+
+			String line = "|";
+			for (int i = 0; i < level; i++) {
+				line += "-";
+			}
+
+			line += tag.getCode().toString();
+
+			Logger.info(line);
+
+			this.printTree(tag.getChildren(), level + 1);
+		}
+	}
+
+	protected List<Tag> fixTags(List<Tag> sourceTagsTree) {
+		return this.fixTags(sourceTagsTree, 0);
+	}
+
+	protected List<Tag> fixTags(List<Tag> tagsTree, int level) {
+		for (Tag tag : tagsTree) {
+			String[] allowedParentTags = tag.getCode().getAllowedParentTags();
+			if (allowedParentTags != null) {
+				if (tag.getParent() == null) {
+					Logger.info("TAG REMOVED: " + tag.getCode());
+					tag.setRemoved(true);
+				} else if (!tag.getParent().getCode().equalsTagNames(allowedParentTags)) {
+					Logger.info("TAG REMOVED: " + tag.getCode());
+					tag.setRemoved(true);
+				}
+			}
+
+			if (tag.getChildren() != null) {
+				for (Tag childTag : tag.getChildren()) {
+					String[] allowedChildTags = tag.getCode().getAllowedChildTags();
+					if (allowedChildTags != null) {
+						if (!childTag.getCode().equalsTagNames(allowedChildTags)) {
+							Logger.info("TAG REMOVED: " + childTag.getCode());
+							childTag.setRemoved(true);
+						}
+					}
+				}
+			}
+
+			if (tag.getChildren() != null) {
+				this.fixTags(tag.getChildren(), level + 1);
+			}
+		}
+
+		if (level == 0) {
+			if (tagsTree.size() == 0) {
+				Logger.info("FAIL!!!");
+			} else{
+				Logger.info("COUNT: " + tagsTree.size());
+			}
+
+			Logger.info("TEST:");
+			this.printTree(tagsTree, 0);
+			Logger.info("/TEST:");
+		}
+
+		return tagsTree;
 	}
 
 	protected void buildHtml(List<Tag> tags) {

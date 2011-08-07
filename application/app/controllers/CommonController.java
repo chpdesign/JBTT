@@ -16,7 +16,7 @@ public class CommonController extends Controller {
 
 	@Before
 	protected static void updateCurrentUser() throws Throwable {
-		CommonController.currentAccount = null;
+		currentAccount = null;
 
 		if (!session.contains("accountId")) {
 			return;
@@ -39,16 +39,18 @@ public class CommonController extends Controller {
 		account.setLastActivityDate(new Timestamp(System.currentTimeMillis()));
 		account.save();
 
-		CommonController.currentAccount = account;
+		currentAccount = account;
 		renderArgs.put("currentAccount", account);
 	}
-
-
-
 
 	@Before
 	protected static void countBefore() throws Throwable {
 		started = System.currentTimeMillis();
+	}
+
+	@After
+	protected static void lastUrl() {
+		flash.put("lastUrl", request.url);
 	}
 
 	@After

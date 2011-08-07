@@ -10,8 +10,4 @@ public class Br extends AbstractCode {
 	public String getOpenTagHtml(String attribute) {
 		return "<br />";
 	}
-
-	public String getCloseTagHtml() {
-		return "";
-	}
 }

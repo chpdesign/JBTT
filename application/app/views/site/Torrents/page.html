@@ -37,6 +37,9 @@
 					<span class="seeds">${torrent.getStatistics().getSeeds()}</span> /
 					<span class="peers">${torrent.getStatistics().getPeers()}</span>
 				</li>
+				<li>
+					<a href="@{site.Torrent.delete(torrent.getId())}">Удалить</a>
+				</li>
 				<li class="right">
 					<a href="/torrent/${torrent.getId()}#comments">Комментарии (${torrent.getCommentsCount()})</a>
 				</li>

@@ -12,8 +12,10 @@ public class BBCodes {
 		new H2(),
 		new H3(),
 		new Image(),
+		new Li(),
 		new Strike(),
 		new Strong(),
+		new Ul(),
 		new Underline(),
 	};
 
