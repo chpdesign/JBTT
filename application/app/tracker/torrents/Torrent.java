@@ -150,20 +150,27 @@ public class Torrent implements Serializable, ICache {
 		Connection connection = null;
 		try {
 			connection = DatabaseFactory.getInstance().getConnection();
+
 			String query = "DELETE FROM `torrents` WHERE `id` = ?";
 			PreparedStatement statement = connection.prepareStatement(query);
 			statement.setLong(1, this.getId());
 			statement.execute();
+			this.setId(null);
 
-			if (statement.execute()) {
-				this.setId(null);
-			}
+//			String peersQuery = "DELETE FROM `torrrent_peers` WHERE `torrent_id` = ?";
+//			PreparedStatement peersStatement = connection.prepareStatement(peersQuery);
+//			peersStatement.setLong(1, this.getId());
+//			peersStatement.execute();
 		} finally {
 			DatabaseFactory.close(connection);
 		}
 
 		TorrentsCache.getInstance().remove(this);
 		TorrentsPaginator.reset();
+
+		try {
+			this.getTorrentFile().delete();
+		} catch (FileNotFoundException ignored) { }
 	}
 
 	public Long getId() {
@@ -438,13 +445,6 @@ public class Torrent implements Serializable, ICache {
 	public Images getImages() {
 		return this.images;
 	}
-
-//	public synchronized TorrentStatistics getStatistics() throws Exception {
-//		if (this.statistics == null || !this.statistics.getTorrentId().equals(this.getId())) {
-//			this.statistics = new TorrentStatistics(this.getId());
-//		}
-//		return this.statistics;
-//	}
 
 	public TorrentStats getStatistics() throws Throwable {
 		return TorrentStatsCache.getInstance().getByTorrentId(this.getId());

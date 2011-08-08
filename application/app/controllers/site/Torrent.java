@@ -195,40 +195,17 @@ public class Torrent extends SecuredController {
 				return;
 			}
 
-			Long uploadId = null;
-			Connection connection = null;
-			try {
-				connection = DatabaseFactory.getInstance().getConnection();
+			TorrentUpload torrentUpload = new TorrentUpload();
+			torrentUpload.setAccountId(currentAccount.getId());
+			torrentUpload.setUploadDate(new Timestamp(System.currentTimeMillis()));
+			torrentUpload.setInfoHash(torrentMetaInfo.getInfoHash());
+			torrentUpload.save();
 
-				PreparedStatement statement = connection.prepareStatement("INSERT INTO torrent_uploads" +
-					"(`account_id`, `upload_date`, `info_hash`) VALUES(?, ?, ?)", Statement.RETURN_GENERATED_KEYS);
-
-//				PreparedStatement statement = connection.prepareStatement("INSERT INTO torrent_uploads(`account_id`, `upload_date`, `info_hash`) " +
-//					"VALUES(?, ?) ON DUPLICATE KEY UPDATE " +
-//					"`account_id` = VALUES(`account_id`), `upload_date` = VALUES(`upload_date`), `info_hash` = VALUES(`info_hash`)",
-//					Statement.RETURN_GENERATED_KEYS);
-
-				statement.setLong(1, currentAccount.getId());
-				statement.setTimestamp(2, new Timestamp(System.currentTimeMillis()));
-				statement.setBytes(3, torrentMetaInfo.getInfoHash());
-				statement.execute();
-
-				ResultSet keys = statement.getGeneratedKeys();
-				if (keys.next()) {
-					uploadId = keys.getLong(1);
-				}
-
-				keys.close();
-				statement.close();
-			} finally {
-				DatabaseFactory.close(connection);
-			}
-
-			uploadResponse.setUploadId(uploadId);
+			uploadResponse.setUploadId(torrentUpload.getId());
 
 			// Save torrent file
 			String uploadDirectory = Config.getString("uploads.paths.torrent");
-			File torrentFile = new File(uploadDirectory + "/temp", uploadId.toString());
+			File torrentFile = new File(uploadDirectory + "/temp", torrentUpload.getId().toString());
 
 			if (torrentFile.exists()) {
 				if (!torrentFile.delete()) {
