@@ -1,8 +1,5 @@
 SET FOREIGN_KEY_CHECKS=0;
 
--- ----------------------------
--- Table structure for `accounts`
--- ----------------------------
 DROP TABLE IF EXISTS `accounts`;
 CREATE TABLE `accounts` (
   `id` bigint(11) unsigned NOT NULL AUTO_INCREMENT,
@@ -19,23 +16,18 @@ CREATE TABLE `accounts` (
   KEY `email` (`email`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=REDUNDANT;
 
--- ----------------------------
--- Table structure for `account_torrents`
--- ----------------------------
 DROP TABLE IF EXISTS `account_torrents`;
 CREATE TABLE `account_torrents` (
-  `account_id` int(10) unsigned NOT NULL,
-  `torrent_id` int(10) unsigned NOT NULL DEFAULT '0',
+  `account_id` bigint(10) unsigned NOT NULL,
+  `torrent_id` bigint(10) unsigned NOT NULL DEFAULT '0',
   `uploaded` bigint(20) unsigned NOT NULL DEFAULT '0',
   `downloaded` bigint(20) unsigned NOT NULL DEFAULT '0',
   `left` bigint(20) unsigned NOT NULL DEFAULT '0',
   `last_update` datetime NOT NULL DEFAULT '0000-00-00 00:00:00',
-  PRIMARY KEY (`account_id`,`torrent_id`)
+  PRIMARY KEY (`account_id`,`torrent_id`),
+  CONSTRAINT `account_torrents` FOREIGN KEY (`account_id`) REFERENCES `accounts` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=REDUNDANT;
 
--- ----------------------------
--- Table structure for `banned_accounts`
--- ----------------------------
 DROP TABLE IF EXISTS `banned_accounts`;
 CREATE TABLE `banned_accounts` (
   `account_id` bigint(10) unsigned NOT NULL,
@@ -46,9 +38,6 @@ CREATE TABLE `banned_accounts` (
   PRIMARY KEY (`account_id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=REDUNDANT;
 
--- ----------------------------
--- Table structure for `banned_cookies`
--- ----------------------------
 DROP TABLE IF EXISTS `banned_cookies`;
 CREATE TABLE `banned_cookies` (
   `cookie_key` char(32) NOT NULL,
@@ -61,21 +50,19 @@ CREATE TABLE `banned_cookies` (
   PRIMARY KEY (`cookie_key`,`cookie_value`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=REDUNDANT;
 
--- ----------------------------
--- Table structure for `categories`
--- ----------------------------
 DROP TABLE IF EXISTS `categories`;
 CREATE TABLE `categories` (
   `id` int(10) unsigned NOT NULL AUTO_INCREMENT,
   `parent_id` int(10) unsigned NOT NULL DEFAULT '0',
   `name` varchar(255) DEFAULT NULL,
   `description` text,
+  `template` char(255) NOT NULL DEFAULT 'default',
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=REDUNDANT;
 
--- ----------------------------
--- Table structure for `client_codes`
--- ----------------------------
+
+INSERT INTO `categories` VALUES ('1', '0', 'Категория 1', 'Описание первой категории', 'default');
+
 DROP TABLE IF EXISTS `client_codes`;
 CREATE TABLE `client_codes` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
@@ -86,9 +73,6 @@ CREATE TABLE `client_codes` (
   KEY `code` (`code`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=REDUNDANT;
 
--- ----------------------------
--- Records of client_codes
--- ----------------------------
 INSERT INTO `client_codes` VALUES ('1', 'AG', '0', 'Ares');
 INSERT INTO `client_codes` VALUES ('2', 'A~', '0', 'Ares');
 INSERT INTO `client_codes` VALUES ('3', 'AR', '0', 'Arctic');
@@ -170,17 +154,6 @@ INSERT INTO `client_codes` VALUES ('78', 'S', '1', 'Shadow\'s client');
 INSERT INTO `client_codes` VALUES ('79', 'T', '1', 'BitTornado');
 INSERT INTO `client_codes` VALUES ('80', 'U', '1', 'UPnP NAT Bit Torrent');
 
--- ----------------------------
--- Table structure for `connection_test_table`
--- ----------------------------
-DROP TABLE IF EXISTS `connection_test_table`;
-CREATE TABLE `connection_test_table` (
-  `a` char(1) DEFAULT NULL
-) ENGINE=MyISAM DEFAULT CHARSET=utf8;
-
--- ----------------------------
--- Table structure for `groups`
--- ----------------------------
 DROP TABLE IF EXISTS `groups`;
 CREATE TABLE `groups` (
   `id` int(10) unsigned NOT NULL,
@@ -191,16 +164,10 @@ CREATE TABLE `groups` (
   PRIMARY KEY (`id`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- ----------------------------
--- Records of groups
--- ----------------------------
 INSERT INTO `groups` VALUES ('1', 'Администратор', '<span style=\"color: red;\">', '</span>', '{\"torrent_upload\": true, \"torrent_download\": true}');
 INSERT INTO `groups` VALUES ('2', 'Модератор', '<span style=\"color: green;\">', '</span>', '{\"torrent_upload\": true, \"torrent_download\": true}');
 INSERT INTO `groups` VALUES ('3', 'Пользователь', '', '', '{\"torrent_upload\": true, \"torrent_download\": true}');
 
--- ----------------------------
--- Table structure for `tags`
--- ----------------------------
 DROP TABLE IF EXISTS `tags`;
 CREATE TABLE `tags` (
   `id` int(11) unsigned NOT NULL AUTO_INCREMENT,
@@ -208,11 +175,8 @@ CREATE TABLE `tags` (
   `key` varchar(255) DEFAULT NULL,
   `title` varchar(255) DEFAULT NULL,
   PRIMARY KEY (`id`)
-) ENGINE=InnoDB AUTO_INCREMENT=10 DEFAULT CHARSET=utf8 ROW_FORMAT=REDUNDANT;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=REDUNDANT;
 
--- ----------------------------
--- Records of tags
--- ----------------------------
 INSERT INTO `tags` VALUES ('1', '2', 'tv', 'TV');
 INSERT INTO `tags` VALUES ('2', '2', 'dvd', 'DVD');
 INSERT INTO `tags` VALUES ('3', '2', 'hd', 'HD');
@@ -223,9 +187,6 @@ INSERT INTO `tags` VALUES ('7', '3', '480p', '480p');
 INSERT INTO `tags` VALUES ('8', '3', '720p', '720p');
 INSERT INTO `tags` VALUES ('9', '3', '1080p', '1080p');
 
--- ----------------------------
--- Table structure for `torrents`
--- ----------------------------
 DROP TABLE IF EXISTS `torrents`;
 CREATE TABLE `torrents` (
   `id` bigint(11) unsigned NOT NULL AUTO_INCREMENT,
@@ -247,11 +208,8 @@ CREATE TABLE `torrents` (
   `state_change_date` datetime DEFAULT NULL,
   PRIMARY KEY (`id`),
   UNIQUE KEY `info_hash` (`info_hash`) USING HASH
-) ENGINE=InnoDB AUTO_INCREMENT=1 DEFAULT CHARSET=utf8 ROW_FORMAT=REDUNDANT;
+) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=REDUNDANT;
 
--- ----------------------------
--- Table structure for `torrent_comments`
--- ----------------------------
 DROP TABLE IF EXISTS `torrent_comments`;
 CREATE TABLE `torrent_comments` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,
@@ -261,16 +219,15 @@ CREATE TABLE `torrent_comments` (
   `content_html` mediumtext,
   `visible` tinyint(1) unsigned NOT NULL DEFAULT '1',
   `post_date` datetime DEFAULT NULL,
-  PRIMARY KEY (`id`)
+  PRIMARY KEY (`id`),
+  KEY `torrents_comments` (`torrent_id`),
+  CONSTRAINT `torrents_comments` FOREIGN KEY (`torrent_id`) REFERENCES `torrents` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=REDUNDANT;
 
--- ----------------------------
--- Table structure for `torrent_peers`
--- ----------------------------
 DROP TABLE IF EXISTS `torrent_peers`;
 CREATE TABLE `torrent_peers` (
-  `account_id` int(10) unsigned NOT NULL DEFAULT '0',
-  `torrent_id` int(10) unsigned NOT NULL DEFAULT '0',
+  `account_id` bigint(10) unsigned NOT NULL DEFAULT '0',
+  `torrent_id` bigint(10) unsigned NOT NULL DEFAULT '0',
   `peer_id` binary(20) DEFAULT '\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0\0',
   `ip` bigint(20) NOT NULL DEFAULT '0',
   `port` smallint(5) unsigned NOT NULL DEFAULT '0',
@@ -279,12 +236,11 @@ CREATE TABLE `torrent_peers` (
   `uploaded` bigint(20) unsigned NOT NULL DEFAULT '0',
   `downloaded` bigint(20) unsigned NOT NULL DEFAULT '0',
   `left` bigint(20) unsigned NOT NULL DEFAULT '0',
-  PRIMARY KEY (`account_id`,`torrent_id`,`ip`,`port`)
+  PRIMARY KEY (`account_id`,`torrent_id`,`ip`,`port`),
+  KEY `torrent_id` (`torrent_id`),
+  CONSTRAINT `torrent_peers` FOREIGN KEY (`torrent_id`) REFERENCES `torrents` (`id`) ON DELETE CASCADE ON UPDATE CASCADE
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8 ROW_FORMAT=REDUNDANT;
 
--- ----------------------------
--- Table structure for `torrent_tags`
--- ----------------------------
 DROP TABLE IF EXISTS `torrent_tags`;
 CREATE TABLE `torrent_tags` (
   `torrent_id` bigint(20) NOT NULL,
@@ -292,9 +248,6 @@ CREATE TABLE `torrent_tags` (
   PRIMARY KEY (`torrent_id`,`tag`)
 ) ENGINE=InnoDB DEFAULT CHARSET=utf8;
 
--- ----------------------------
--- Table structure for `torrent_uploads`
--- ----------------------------
 DROP TABLE IF EXISTS `torrent_uploads`;
 CREATE TABLE `torrent_uploads` (
   `id` bigint(20) unsigned NOT NULL AUTO_INCREMENT,

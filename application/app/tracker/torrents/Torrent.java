@@ -156,11 +156,6 @@ public class Torrent implements Serializable, ICache {
 			statement.setLong(1, this.getId());
 			statement.execute();
 			this.setId(null);
-
-//			String peersQuery = "DELETE FROM `torrrent_peers` WHERE `torrent_id` = ?";
-//			PreparedStatement peersStatement = connection.prepareStatement(peersQuery);
-//			peersStatement.setLong(1, this.getId());
-//			peersStatement.execute();
 		} finally {
 			DatabaseFactory.close(connection);
 		}
